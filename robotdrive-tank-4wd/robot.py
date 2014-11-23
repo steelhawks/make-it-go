@@ -13,10 +13,14 @@ class MyRobot(wpilib.SimpleRobot):
         
         self.left_stick = wpilib.Joystick(1)
         self.right_stick = wpilib.Joystick(2)
+        
         self.lf_motor = wpilib.Talon(1)
         self.lr_motor = wpilib.Talon(2)
         self.rf_motor = wpilib.Talon(3)
         self.rr_motor = wpilib.Talon(4)
+        
+        self.robot_drive = wpilib.RobotDrive(self.lr_motor, self.rr_motor,
+                                             self.lf_motor, self.rf_motor)
         
         # Position gets automatically updated as robot moves
         self.gyro = wpilib.Gyro(1)
@@ -27,8 +31,20 @@ class MyRobot(wpilib.SimpleRobot):
             wpilib.Wait(0.01)
 
     def Autonomous(self):
+        '''Called when autonomous mode is enabled'''
+        
+        timer = wpilib.Timer()
+        timer.Start()
+        
+        self.GetWatchdog().SetEnabled(False)
         while self.IsAutonomous() and self.IsEnabled():
-            wpilib.Wait(0.04)
+            
+            if timer.Get() < 2.0:
+                self.robot_drive.ArcadeDrive(-1.0, -.3)
+            else:
+                self.robot_drive.ArcadeDrive(0, 0)
+            
+            wpilib.Wait(0.01)
 
     def OperatorControl(self):
         '''Called when operation control mode is enabled'''
@@ -39,10 +55,7 @@ class MyRobot(wpilib.SimpleRobot):
 
         while self.IsOperatorControl() and self.IsEnabled():
             dog.Feed()
-            self.lf_motor.Set(-self.left_stick.GetY())
-            self.lr_motor.Set(-self.left_stick.GetY())
-            self.rf_motor.Set(self.right_stick.GetY())
-            self.rr_motor.Set(self.right_stick.GetY())
+            self.robot_drive.TankDrive(self.left_stick, self.right_stick)
             wpilib.Wait(0.04)
 
 
