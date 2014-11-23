@@ -18,7 +18,7 @@ class MyRobot(wpilib.SimpleRobot):
         self.lr_motor = wpilib.Talon(2)
         self.rf_motor = wpilib.Talon(3)
         self.rr_motor = wpilib.Talon(4)
-
+        
         self.robot_drive = wpilib.RobotDrive(self.lr_motor, self.rr_motor,
                                              self.lf_motor, self.rf_motor)
         
@@ -32,10 +32,10 @@ class MyRobot(wpilib.SimpleRobot):
 
     def Autonomous(self):
         '''Called when autonomous mode is enabled'''
-        
+
         self.GetWatchdog().SetEnabled(False)
         while self.IsAutonomous() and self.IsEnabled():
-            self.robot_drive.TankDrive(0.5, 0.5)
+            self.robot_drive.TankDrive(0.5, 0.5, False)
             wpilib.Wait(0.01)
 
     def OperatorControl(self):
